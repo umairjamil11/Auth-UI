@@ -12,12 +12,9 @@ import HomeScreen from '../screens/home/HomeScreen'
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => {
-    const [InitialRoute, setInitialRoute] = useState('')
-
 
     return (
         <Stack.Navigator
-            initialRouteName={InitialRoute}
             screenOptions={{ headerShown: false }}>
             <Stack.Screen name={Routes.WelcomeScreen} component={WelcomeScreen} />
             <Stack.Screen name={Routes.SignUpScreen} component={SignUpScreen} />

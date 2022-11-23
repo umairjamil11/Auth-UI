@@ -9,19 +9,21 @@ import SuccessMarkIcon from '../../../../assets/images/Successmark.svg'
 import { useState } from 'react'
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import Animated, { FadeInDown, FadeOutDown, useAnimatedStyle, useDerivedValue, withTiming, ZoomInDown, ZoomInRotate, ZoomInUp, ZoomOutRotate } from 'react-native-reanimated'
+
+const passwordChangedSchema = yup.object().shape({
+    password: yup.string()
+        .min(6, ({ min }) => `Password must be ${min} characters long.`)
+        .required('Password is required.'),
+    confirmPassword: yup.string()
+        .oneOf([yup.ref('password'), null], 'Passwords must match')
+        .min(6, ({ min }) => `Password must be ${min} characters long.`)
+        .required('Password is required.'),
+});
 
 const ChangePasswordScreen = () => {
     const navigation = useCustomNavigation();
     const [passwordChanged, setpasswordChanged] = useState(false)
-    const passwordChangedSchema = yup.object().shape({
-        password: yup.string()
-            .min(6, ({ min }) => `Password must be ${min} characters long.`)
-            .required('Password is required.'),
-        confirmPassword: yup.string()
-            .oneOf([yup.ref('password'), null], 'Passwords must match')
-            .min(6, ({ min }) => `Password must be ${min} characters long.`)
-            .required('Password is required.'),
-    });
 
     return <Formik
         validationSchema={passwordChangedSchema}
@@ -48,7 +50,7 @@ const ChangePasswordScreen = () => {
                     />
                     {
                         (errors.password && touched.password)
-                        && <Text style={loginStyles.errorMessage}>{errors.password}</Text>
+                        && <Animated.Text entering={FadeInDown} exiting={FadeOutDown} style={loginStyles.errorMessage}>{errors.password}</Animated.Text>
                     }
                     <TextField
                         onChanged={handleChange('confirmPassword')}
@@ -59,7 +61,7 @@ const ChangePasswordScreen = () => {
                     />
                     {
                         (errors.confirmPassword && touched.confirmPassword)
-                        && <Text style={loginStyles.errorMessage}>{errors.confirmPassword}</Text>
+                        && <Animated.Text entering={FadeInDown} exiting={FadeOutDown} style={loginStyles.errorMessage}>{errors.confirmPassword}</Animated.Text>
                     }
                     <CustomAuthButton
                         customButtonStyle={{ marginTop: 38 }}
@@ -77,10 +79,16 @@ const ChangePasswordScreen = () => {
 
 export default ChangePasswordScreen
 
-export const PasswordChangedSuccessComponent = () => {
+export const PasswordChangedSuccessComponent = ({ opacity }) => {
+
+
+
     const navigattion = useCustomNavigation();
-    return <View
-        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+    return <Animated.View
+        entering={ZoomInDown}
+        style={[
+            { flex: 1, alignItems: 'center', justifyContent: 'center' },
+        ]}
     >
         <SuccessMarkIcon style={{ alignSelf: 'center' }} />
         <Text style={[loginStyles.WelcomeMessage, { fontSize: 26 }]}>Password Changed</Text>
@@ -90,5 +98,5 @@ export const PasswordChangedSuccessComponent = () => {
             customButtonStyle={{ marginTop: 40 }}
             onPressed={() => navigattion.goBack()}
         />
-    </View>
+    </Animated.View>
 }

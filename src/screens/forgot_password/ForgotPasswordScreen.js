@@ -8,6 +8,7 @@ import CustomAuthButton from '../../components/CustomAuthButton'
 import CustomRichText from '../../components/RichText'
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated'
 
 const forgotPasswordValidationSchema = yup.object().shape({
     email: yup.string().email('Please enter valid email.').required(),
@@ -48,7 +49,7 @@ const ForgotPasswordScreen = () => {
                         />
                         {
                             (errors.email && touched.email) &&
-                            <Text style={loginStyles.errorMessage}>{errors.email}</Text>
+                            <Animated.Text entering={FadeInDown} exiting={FadeOutDown} style={loginStyles.errorMessage}>{errors.email}</Animated.Text>
                         }
                         <CustomAuthButton
                             customButtonStyle={{ marginTop: 38 }}

@@ -6,9 +6,10 @@ import TextField from '../../components/TextField'
 import FontAwesome from 'react-native-vector-icons/FontAwesome5'
 import { dimensions, dismissKeyBoard, Routes, useCustomNavigation } from '../../utils/constants'
 import CustomRichText from '../../components/RichText'
-import { useContext, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Formik } from 'formik'
 import * as yup from 'yup'
+import Animated, { FadeInDown, FadeOutDown, useAnimatedStyle, useSharedValue, withTiming, ZoomIn } from 'react-native-reanimated'
 
 const loginValidationSchema = yup.object().shape({
     email: yup.string().email('Please enter valid email.').required('Email is required to sign in.'),
@@ -21,17 +22,29 @@ const loginValidationSchema = yup.object().shape({
 const LoginScreen = () => {
     const [passwordHidden, setpasswordHidden] = useState(true)
     const navigation = useCustomNavigation();
+
+    const titleYOffset = useSharedValue(12);
+    const RtitleStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: titleYOffset.value }]
+    }));
+
+    useEffect(() => {
+        titleYOffset.value = withTiming(-5)
+    })
+
     return (
         <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={loginValidationSchema}
             validateOnMount={true}
-            onSubmit={values => { }} >
+            onSubmit={values => {
+                // perform login
+            }} >
             {
                 ({ resetForm, handleChange, handleBlur, handleSubmit, values, touched, errors, isValid }) => (
                     <View style={loginStyles.bg} onTouchStart={dismissKeyBoard}>
                         <CustomBackButton onPressed={() => navigation.goBack()} />
-                        <Text style={loginStyles.WelcomeMessage}>Welcome back! Glad{'\n'}to see you, Again!</Text>
+                        <Animated.Text style={[loginStyles.WelcomeMessage, RtitleStyle]}>Welcome back! Glad{'\n'}to see you, Again!</Animated.Text>
 
                         <TextField
                             keyboardType='email-address'
@@ -43,7 +56,7 @@ const LoginScreen = () => {
                         />
                         {
                             (errors.email && touched.email) &&
-                            <Text style={loginStyles.errorMessage}>{errors.email}</Text>
+                            <Animated.Text entering={FadeInDown} exiting={FadeOutDown} style={loginStyles.errorMessage}>{errors.email}</Animated.Text>
 
                         }
                         <TextField
@@ -57,7 +70,7 @@ const LoginScreen = () => {
                         />
                         {
                             (errors.password && touched.password) &&
-                            <Text style={loginStyles.errorMessage}>{errors.password}</Text>
+                            <Animated.Text entering={FadeInDown} exiting={FadeOutDown} style={loginStyles.errorMessage}>{errors.password}</Animated.Text>
 
                         }
                         <TouchableOpacity
